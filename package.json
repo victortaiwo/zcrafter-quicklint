@@ -1,0 +1,28 @@
+{
+  "name": "zcrafter-quicklint",
+  "version": "1.0.0",
+  "description": "Zowe CLI plug-in that lints COBOL members on z/OS with ChatGPT AI.",
+  "author": "Your Name <you@example.com>",
+  "license": "Apache-2.0",
+  "main": "lib/index.js",
+  "imperative": {
+    "configurationModule": "lib/pluginDef.js"
+  },
+  "scripts": {
+    "clean": "rimraf lib",
+    "prebuild": "npm run clean && echo Using TypeScript && tsc --version",
+    "build": "tsc --pretty && madge -c lib"
+  },
+  "dependencies": {
+    "axios": "^1.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "madge": "^7",
+    "rimraf": "^5",
+    "typescript": "^5.0"
+  },
+  "peerDependencies": {
+    "@zowe/imperative": "^5"
+  }
+}

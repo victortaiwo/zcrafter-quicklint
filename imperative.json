@@ -1,0 +1,14 @@
+{
+    "name": "zcrafter-quicklint",               
+    "version": "1.0.0",
+    "productDisplayName": "ZCrafter QuickLint Plugin",
+  
+    "pluginTsConfig": "./lib/pluginDef.js",
+
+    "commandModuleGlobs": [
+      "./lib/cli/*/*.definition.js"
+    ],
+    "yargsStrict": true,
+    "autoStore": true
+  }
+  
