@@ -22,7 +22,7 @@ ZCrafter QuickLint is a Zowe CLI plugin that helps mainframe developers improve 
 
 ## Installation
 
-### Install from NPM (when published)
+### Install from NPM 
 
 ```bash
 zowe plugins install zcrafter-quicklint
