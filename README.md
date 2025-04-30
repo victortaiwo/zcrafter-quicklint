@@ -1,88 +1,142 @@
-# Zowe CLI Sample Plug-in
+# ZCrafter QuickLint
 
-This repository contains a sample Zowe CLI plug-in that adheres to the contribution guidelines for the project. Use this project and the associated tutorials as a starting point for creating Zowe CLI plug-ins.
+A Zowe CLI plugin that uses OpenAI's ChatGPT to lint and analyze COBOL code directly from z/OS datasets.
 
-- [Zowe CLI Sample Plug-in](#zowe-cli-sample-plug-in)
-  - [Why Create a Zowe CLI Plug-in?](#why-create-a-zowe-cli-plug-in)
-  - [Tutorials, Documentation, and Guidelines](#tutorials-documentation-and-guidelines)
-    - [Tutorials](#tutorials)
-    - [Contribution Guidelines](#contribution-guidelines)
-    - [Imperative CLI Framework Documentation](#imperative-cli-framework-documentation)
-    - [Jenkinsfile Guidelines](#jenkinsfile-guidelines)
-  - [Prerequisites](#prerequisites)
-  - [Create a Local Development Space](#create-a-local-development-space)
-    - [Clone zowe-cli-sample-plugin and Build From Source](#clone-zowe-cli-sample-plugin-and-build-from-source)
-    - [Run the Automated Tests](#run-the-automated-tests)
-    - [Install the zowe-cli-sample-plugin to Zowe CLI](#install-the-zowe-cli-sample-plugin-to-zowe-cli)
+## Overview
 
-## Why Create a Zowe CLI Plug-in?
+ZCrafter QuickLint is a Zowe CLI plugin that helps mainframe developers improve their COBOL code by leveraging AI assistance. The plugin connects to z/OS via z/OSMF, retrieves COBOL source code from datasets, and sends it to OpenAI's ChatGPT for analysis and linting.
 
-You might want to create a Zowe CLI plug-in to accomplish the following:
+## Features
 
-* Provide new scriptable functionality for yourself, your organization, or to a broader community.
-* Make use of Zowe CLI infrastructure (profiles and programmatic APIs).
-* Participate in the Zowe CLI community space.
-
-## Tutorials, Documentation, and Guidelines
-
-We also provide the following tutorials, guidelines, and documentation to assist you during development:
-
-### Tutorials
-
-To learn about how to work with this sample plug-in, build new commands, or build a new Zowe CLI plug-in, see [Extend Zowe CLI](https://docs.zowe.org/stable/extend/extend-zowe-overview/#extend-zowe-cli).
-
-**Note:** For an advanced example on how to create a plug-in that serves as a Credential Manager, see [Zowe CLI secrets for Kubernetes](https://github.com/zowe/zowe-cli-secrets-for-kubernetes/)
-
-### Contribution Guidelines
-
-The Zowe CLI [contribution guidelines](CONTRIBUTING.md) contain standards and conventions for developing Zowe CLI plug-ins.
-
-The guidelines contain critical information about working with the code, running/writing/maintaining automated tests, developing consistent syntax in your plug-in, and ensuring that your plug-in integrates with Zowe CLI properly.
-
-### Imperative CLI Framework Documentation
-
-[Imperative CLI Framework](https://github.com/zowe/imperative/wiki) documentation is a key source of information to learn about the features of Imperative CLI Framework (the code framework that you use to build plug-ins for Zowe CLI). Refer to these documents during development.
-
-### Jenkinsfile Guidelines
-
-Reference the [Jenkinsfile Guidelines](CICD-TEMPLATE.md) for information about setting up and maintaining automated testing/deployment for your plug-in with Jenkins automation server.
+- Retrieve COBOL code from mainframe datasets using z/OSMF
+- Send code to OpenAI's ChatGPT for analysis
+- Get AI-powered feedback on code quality and best practices
+- Support for mock data during testing
 
 ## Prerequisites
 
-Before you work with the Zowe CLI sample plug-in, [install Zowe CLI globally.](https://docs.zowe.org/active-development/user-guide/cli-installcli.html)
+- [Node.js](https://nodejs.org/) v14 or later
+- [Zowe CLI](https://docs.zowe.org/stable/user-guide/cli-installcli.html) v5 or later
+- An OpenAI API key
+- Access to z/OSMF on your z/OS system
 
-## Create a Local Development Space
+## Installation
 
-To create your development space, clone and build the Zowe CLI sample plug-in from source.
+### Install from NPM (when published)
 
-Create a local development folder named `zowe-tutorial`. You will clone and build all projects in this folder.
-
-Clone the repositories into your development folder to match the following structure:
-
-```
-zowe-tutorial
-└── zowe-cli-sample-plugin
+```bash
+zowe plugins install zcrafter-quicklint
 ```
 
-### Clone zowe-cli-sample-plugin and Build From Source
+### Install from Source
 
-See [setup](docs/tutorials/Setup.md).
+1. Clone the repository
+```bash
+git clone https://github.com/yourusername/zcrafter-quicklint.git
+cd zcrafter-quicklint
+```
 
-### Run the Automated Tests
+2. Install dependencies and build the plugin
+```bash
+npm install
+npm run build
+```
 
-**Note:** If you don't have access to a z/OSMF instance at your site, run `npm run server:start` to launch a mock server at http://localhost:3000.
+3. Install the plugin to Zowe CLI
+```bash
+zowe plugins install .
+```
 
-1. `cd __tests__/__resources__/properties`
-2. Copy `example_properties.yaml` to `custom_properties.yaml`.
-3. Edit the properties within `custom_properties.yaml` to contain valid system information for your site.
-4. `cd` to your `zowe-cli-sample-plugin` folder
-5. `npm run test`
+4. Verify the installation
+```bash
+zowe zcrafter-quicklint --help
+```
 
-### Install the zowe-cli-sample-plugin to Zowe CLI
+## Configuration
 
-This process assumes that you already installed Zowe CLI on your PC in the previous steps.
+### OpenAI API Key
 
-1. `cd` to your `zowe-tutorial` folder.
-2. `zowe plugins install ./zowe-cli-sample-plugin`
-3. `zowe zowe-cli-sample`
-   You should see help text displayed if the installation was successful.
+You need to provide your OpenAI API key in one of two ways:
+
+1. As an environment variable:
+```bash
+export OPENAI_API_KEY=your-api-key-here
+```
+
+2. Using the `--api-key` option when running commands:
+```bash
+zowe zcrafter-quicklint lint "DATASET.NAME(MEMBER)" --api-key your-api-key-here
+```
+
+### z/OSMF Connection
+
+If you have a Zowe z/OSMF profile set up, the plugin will use it automatically. Otherwise, you can specify connection details with command options:
+
+```bash
+zowe zcrafter-quicklint lint "DATASET.NAME(MEMBER)" --host mainframe.host.com --port 443 --user YOURID --password YOURPASS
+```
+
+## Usage Examples
+
+### Lint a COBOL program
+
+```bash
+zowe zcrafter-quicklint lint "USERID.COBOL.SOURCE(PROGRAM1)"
+```
+
+### Use mock data for testing (no z/OSMF connection needed)
+
+```bash
+zowe zcrafter-quicklint lint "USERID.COBOL.SOURCE(PROGRAM1)" --mock
+```
+
+### With specific connection details
+
+```bash
+zowe zcrafter-quicklint lint "USERID.COBOL.SOURCE(PROGRAM1)" --host mainframe.example.com --port 10443 --user mainuser --password mainpass --ru false
+```
+
+## Command Reference
+
+### lint
+
+Analyze a COBOL source member using ChatGPT.
+
+```
+zowe zcrafter-quicklint lint <dataset>
+
+POSITIONAL ARGUMENTS
+  dataset  HLQ.PDS(MEMBER) to lint
+
+OPTIONS
+  --host             The z/OSMF server host name
+  --port             The z/OSMF server port
+  --ru, --reject-unauthorized  Reject self-signed certificates (default: true)
+  --user             The z/OSMF server username
+  --password         The z/OSMF server password
+  --mock             Use mock COBOL data for testing (default: false)
+  --api-key          OpenAI API key (alternatively, set OPENAI_API_KEY environment variable)
+```
+
+## Troubleshooting
+
+1. If you encounter OpenAI API authentication errors, check that your API key is valid and correctly provided.
+
+2. For z/OSMF connection issues, verify your connection parameters and credentials.
+
+3. Use the `--mock` flag to test the functionality without requiring a z/OSMF connection.
+
+4. Make sure your z/OSMF installation is correctly configured and accessible.
+
+## License
+
+This project is licensed under Apache License 2.0 and Eclipse Public License v2.0 (dual license).
+
+## Contributing
+
+Contributions are welcome! Please follow the standard Zowe CLI plugin contribution guidelines.
+
+## Acknowledgments
+
+- Built on the [Zowe CLI](https://github.com/zowe/zowe-cli) framework
+- Uses OpenAI's ChatGPT for COBOL code analysis
